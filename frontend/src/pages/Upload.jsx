@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API = import.meta.env.VITE_API_URL || '/api';
 import LoadingSpinner from '../components/LoadingSpinner';
 import sampleData from '../mock/sampleData.json';
 
@@ -72,7 +72,12 @@ export default function Upload() {
       navigate('/review', { state: { extractionData: response.data } });
     } catch (err) {
       console.warn('Backend extraction failed:', err);
-      const backendError = err.response?.data?.detail || err.message;
+      let backendError = err.response?.data?.detail || err.message;
+      
+      if (err.response?.status === 502 || err.response?.status === 503 || err.response?.status === 504 || err.message === 'Network Error') {
+        backendError = "Backend server is waking up from sleep (Render free tier cold-start). Please wait ~50 seconds and try again.";
+      }
+      
       alert(`Backend AI Extraction Failed: ${backendError}\n\nFalling back to mock data so you can test the UI.`);
       
       // Fallback to sampleData if backend fails

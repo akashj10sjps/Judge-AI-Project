@@ -44,6 +44,14 @@ app.add_middleware(
 )
 
 
+@app.get("/", summary="Root Endpoint")
+async def root():
+    return {
+        "message": "JudgeAI Backend is running smoothly!",
+        "docs_url": "/docs",
+        "status": "active"
+    }
+
 # ---------------------------------------------------------------------------
 # ENDPOINT 1 — POST /extract
 # ---------------------------------------------------------------------------
